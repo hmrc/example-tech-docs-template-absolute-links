@@ -1,0 +1,18 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  tech-docs-site:
+    build: ./docker-images/tech-docs-site
+    volumes:
+      - site:/usr/src/app/build:rw
+  webserver:
+    build: ./docker-images/nginx-proxy
+    depends_on:
+        tech-docs-site:
+          condition: service_completed_successfully
+    volumes:
+      - site:/nginx/sites/root:ro
+      - site:/nginx/sites/as-subdirectory/mysite:ro
+    ports:
+      - "8080:80"
+volumes:
+  site:
